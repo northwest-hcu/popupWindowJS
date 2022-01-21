@@ -1,11 +1,5 @@
 'use strict';
 
-/*
-  element:elem,
-  image:img
-  と省略している
-*/
-
 class PopupWindow{
   constructor(dictList,windowTitle,...options){
     this.parent=null;
