@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang='ja'>
+  <head>
+    <meta charset="utf-8">
+    <title>Sample</title>
+    <style>
+      *{
+        margin:0px;
+        user-select:none;
+      }
+      html{
+        height:2000px;
+      }
+      .btn{
+        margin:10px 20px;
+        padding:10px 20px;
+        font-size:20px;
+        border:1px solid black;
+        border-radius:20px;
+        cursor:pointer;
+        width:300px;
+        text-align:center;
+      }
+    </style>
+  </head>
+  <body>
+    <script src='./popupWindow.js'></script>
+    <script>
+    const testWindow=new PopupWindow([
+      {'type':'msg','options':{
+        'label':'Main Error'
+      }},
+      {'type':'startFlex','options':{}},
+      {'type':'btn','options':{
+        'closeEvent':true,
+        'label':'OK'
+      }},
+      {'type':'endFlex','options':{}}
+    ],'警告!',{width:'300px',top:'20px',left:'10px',color:'rgb(200,60,60)',key:'main',center:true});
+
+    function testfunc1(){
+      console.log('testfunc1');
+    }
+    function testfunc2(){
+      console.log('testfunc2');
+    }
+    const moveWindow=alertWindow('これは動きます.');
+    spreadWindow(testWindow,500);
+    testWindow.topLevel();
+    </script>
+  </body>
+</html>
