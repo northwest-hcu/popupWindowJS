@@ -1,5 +1,11 @@
 'use strict';
 
+/*
+  element:elem,
+  image:img
+  と省略している
+*/
+
 class PopupWindow{
   constructor(dictList,windowTitle,...options){
     this.parent=null;
@@ -156,10 +162,10 @@ class PopupWindow{
       //イベント設定
       elem.addEventListener('mouseover',{handleEvent:this.hoverBtn,color:hoverColor},false);
       elem.addEventListener('mouseout',{handleEvent:this.landingBtn,color:backgroundColor},false);
+      elem.addEventListener('click',func,false);
       if(closeEvent){
         elem.addEventListener('click',{handleEvent:this.closeWindow,elem:this},false);
       }
-      elem.addEventListener('click',func,false);
       return elem;
     }else if(type==='date'){
       //DOM構築
@@ -243,13 +249,14 @@ class PopupWindow{
       input.setAttribute('id',id);
       //デザイン設定
       elem.style.padding='5px';
+      input.style.margin='auto';
       input.style.outline='0px';
       input.style.border=border;
       input.style.fontSize=fontSize;
       title.style.fontSize=fontSize;
       input.placeholder=placeholder;
       input.value=defaultValue;
-      input.cols='40';
+      input.cols='30';
       input.rows='4';
       input.style.resize='none';
       //イベント設定
@@ -310,8 +317,12 @@ class PopupWindow{
     this.style.border='1px solid black';
   }
 
-  //ウインドウの削除(子要素からの場合)
+  //ウインドウの削除(closeEvent:trueのとき)
   closeWindow(){
+    if(!this.elem){
+      console.log('closeWindow function exists for inner methods. Please use close function when you want to close window from outside.');
+      return;
+    }
     let closeEvent; //強制発火させるためのイベント変数の枠
     //親がいる場合、親の子要素群から自身を削除する
     if(this.elem.parent){
@@ -324,7 +335,22 @@ class PopupWindow{
     }
     //ウインドウを消す
     this.elem.body.outerHTML='';
+  }
 
+  //ウインドウの削除(外部からメソッドとして使うとき)
+  close(){
+    let closeEvent; //強制発火させるためのイベント変数の枠
+    //親がいる場合、親の子要素群から自身を削除する
+    if(this.parent){
+      this.parent.removeChild(this.elem);
+    }
+    //子要素全てでcloseBtnを押したときの処理を強制発火
+    while(this.children.length>0){
+      closeEvent=new Event('click',{bubbles:false,cancelable:true});
+      this.children[0].closeBtn.dispatchEvent(closeEvent);
+    }
+    //ウインドウを消す
+    this.body.outerHTML='';
   }
 
   //デバッグ用
@@ -362,6 +388,10 @@ class PopupWindow{
 
   //ドラッグ開始時
   dragStart(e){
+    if(!this.elem){
+      console.log('dragStart function exists for inner methods.');
+      return;
+    }
     if(this.elem.draggable && !this.elem.dragFlag){
       this.elem.mouseX=e.clientX;
       this.elem.mouseY=e.clientY;
@@ -371,6 +401,10 @@ class PopupWindow{
 
   //ドラッグ時
   dragMove(e){
+    if(!this.elem){
+      console.log('dragMove function exists for inner methods.');
+      return;
+    }
     if(this.elem.draggable && this.elem.dragFlag){
       this.elem.body.style.left=parseInt(this.elem.body.style.left)+parseInt(e.clientX-this.elem.mouseX)+'px';
       this.elem.body.style.top=parseInt(this.elem.body.style.top)+parseInt(e.clientY-this.elem.mouseY)+'px';
@@ -381,6 +415,10 @@ class PopupWindow{
 
   //ドラッグ終了時
   dragEnd(e){
+    if(!this.elem){
+      console.log('dragEnd function exists for inner methods.');
+      return;
+    }
     if(this.elem.draggable && this.elem.dragFlag){
       this.elem.mouseX=e.clientX;
       this.elem.mouseY=e.clientY;
@@ -491,6 +529,6 @@ function spreadWindow(parentWindow,count){
     ],'警告!',{width:'300px',top:(Math.random()*heightRange)+'px',left:(Math.random()*widthRange)+'px',color:'rgb(200,60,60)',key:'alert_'+i});
     parentWindow.addChild(popupWindow);
     popupWindow.setDraggable(true);
-    popupWindow.hide(true);
+    popupWindow.hide(false);
   }
 }
